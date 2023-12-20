@@ -16,7 +16,8 @@ async def start_message(msg: Message, state: FSMContext):
 
     if await user_is_present(user_id=msg.from_user.id):
         await load_user(user_id=msg.from_user.id, state=state)
-        await msg.answer(text="Ожидай начала жеребьевки", reply_markup=get_wait_keyboard().as_markup())
+        await msg.answer(text="Ожидай начала жеребьевки",
+                         reply_markup=get_wait_keyboard().as_markup(resize_keyboard=True))
         await state.set_state(UserStateGroup.wait_state)
         logging.info(f"Текущий state = {await state.get_state()} Функция - start_message if")
     else:
@@ -26,7 +27,9 @@ async def start_message(msg: Message, state: FSMContext):
                               "короче, не напасешься. "
                               "Так что мы предлагаем поиграть в Тайного Санту.",
                          reply=False)
-        await msg.answer(text="Введи свои ФИО, чтобы Санта знал кому он дарит подарок")
+        await msg.answer(
+            text="Каждая посылка имеет своего адресата. Тебе необходимо написать свое <b>ФИО</b>, "
+                 "чтобы твой Санта знал кому отправлять.")
         await state.set_state(UserStateGroup.input_name_state)
         logging.info(f"Текущий state = {await state.get_state()} Функция - start_message else")
 

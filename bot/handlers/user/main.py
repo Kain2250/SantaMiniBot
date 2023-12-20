@@ -15,16 +15,18 @@ from bot.keyboards.reply import get_wait_keyboard
 
 async def wait_message(msg: Message, state: FSMContext):
     await update_user(msg=msg, state=state)
-    await msg.answer(text="Ожидай начала жеребьевки", reply_markup=get_wait_keyboard().as_markup())
+    await msg.answer(text="Ожидай начала жеребьевки", reply_markup=get_wait_keyboard().as_markup(resize_keyboard=True))
     logging.info(f"Текущий state = {await state.get_state()} Функция - wait_message")
 
 
 async def info_user_message(msg: Message, state: FSMContext):
+    # TODO Сделать вывод подопечного
     await print_user(user_id=msg.from_user.id, state=state, msg=msg)
     logging.info(f"Текущий state = {await state.get_state()} Функция - info_user_message")
 
 
 async def draw_message(msg: Message, state: FSMContext):
+    # TODO Сделать функционал отправки подарка
     await print_user(user_id=msg.from_user.id, state=state, msg=msg)
     logging.info(f"Текущий state = {await state.get_state()} Функция - draw_message")
 

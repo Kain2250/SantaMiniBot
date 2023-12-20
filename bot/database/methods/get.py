@@ -26,14 +26,15 @@ async def load_user(user_id: int, state: FSMContext) -> bool:
                   ('user_name', results[3]),
                   ('address', results[4]),
                   ('wish', results[5]),
-                  ('ward_name', results[6]),
-                  ('ward_address', results[7]),
-                  ('ward_wish', results[8]),
-                  ('is_input_name', results[9]),
-                  ('is_input_address', results[10]),
-                  ('is_input_wish', results[11]),
-                  ('is_distributed', results[12]),
-                  ('is_register', results[13])
+                  ('ward_id', results[6]),
+                  ('ward_name', results[7]),
+                  ('ward_address', results[8]),
+                  ('ward_wish', results[9]),
+                  ('is_input_name', results[10]),
+                  ('is_input_address', results[11]),
+                  ('is_input_wish', results[12]),
+                  ('is_distributed', results[13]),
+                  ('is_register', results[14])
                   ])
         )
 
@@ -49,7 +50,8 @@ async def get_ward_data(user_id: str, state: FSMContext):
 
     if results:
         await state.update_data(
-            dict([('ward_name', results[3]),
+            dict([('ward_id', results[6]),
+                  ('ward_name', results[3]),
                   ('ward_address', results[4]),
                   ('ward_wish', results[5])
                   ])
@@ -58,12 +60,12 @@ async def get_ward_data(user_id: str, state: FSMContext):
     connection.close()
 
 
-async def get_ward_id(user_id: int, user_wish: str) -> str:
+async def get_ward_id(user_id: int, ward_id: str) -> str:
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
 
-    results = cursor.execute('SELECT user_id FROM Users WHERE user_id != ? and is_distributed != 1 and ward_wish != ?',
-                             (user_id, user_wish)).fetchone()
+    results = cursor.execute('SELECT user_id FROM Users WHERE user_id != ? and is_distributed != 1 and ward_id != ?',
+                             (user_id, ward_id)).fetchone()
 
     ret = "None"
     if results:
@@ -87,6 +89,7 @@ async def print_user(user_id: int, state: FSMContext, msg: Message):
                               f"user_name = {data.get('user_name')}\n"
                               f"address = {data.get('address')}\n"
                               f"wish = {data.get('wish')}\n"
+                              f"ward_id = {data.get('ward_id')}\n"
                               f"ward_name = {data.get('ward_name')}\n"
                               f"ward_address = {data.get('ward_address')}\n"
                               f"ward_wish = {data.get('ward_wish')}\n"
@@ -114,15 +117,25 @@ async def print_all_user(state: FSMContext, msg: Message):
                        f"user_name = {item[3]}\n" \
                        f"address = {item[4]}\n" \
                        f"wish = {item[5]}\n" \
-                       f"ward_name = {item[6]}\n" \
-                       f"ward_address = {item[7]}\n" \
-                       f"ward_wish = {item[8]}\n" \
-                       f"is_input_name = {item[9]}\n" \
-                       f"is_input_address = {item[10]}\n" \
-                       f"is_input_wish = {item[11]}\n" \
-                       f"is_distributed = {item[12]}\n" \
-                       f"is_register = {item[13]}\n\n"
+                       f"ward_id = {item[6]}\n" \
+                       f"ward_name = {item[7]}\n" \
+                       f"ward_address = {item[8]}\n" \
+                       f"ward_wish = {item[9]}\n" \
+                       f"is_input_name = {item[10]}\n" \
+                       f"is_input_address = {item[11]}\n" \
+                       f"is_input_wish = {item[12]}\n" \
+                       f"is_distributed = {item[13]}\n" \
+                       f"is_register = {item[14]}\n\n"
 
         await msg.answer(text=message)
 
     connection.close()
+
+
+async def get_all_users() -> list:
+    connection = sqlite3.connect(TgKeys.DB_NAME)
+    cursor = connection.cursor()
+    results = cursor.execute('SELECT * FROM Users').fetchall()
+    connection.close()
+
+    return results

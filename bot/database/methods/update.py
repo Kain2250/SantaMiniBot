@@ -14,6 +14,7 @@ async def update_user(msg: Message, state: FSMContext) -> None:
         user_name = ?,
         address = ?,
         wish = ?,
+        ward_id = ?,
         ward_name = ?,
         ward_address = ?,
         ward_wish = ?,
@@ -26,6 +27,7 @@ async def update_user(msg: Message, state: FSMContext) -> None:
         data.get('user_name'),
         data.get('address'),
         data.get('wish'),
+        data.get('ward_id'),
         data.get('ward_name') if (data.get('ward_name') is not None) else '',
         data.get('ward_address') if (data.get('ward_address') is not None) else '',
         data.get('ward_wish') if (data.get('ward_wish') is not None) else '',
@@ -39,14 +41,15 @@ async def update_user(msg: Message, state: FSMContext) -> None:
     connection.close()
 
 
-async def update_ward(ward_id: str) -> None:
+async def update_ward(ward_id: str, user_id: str) -> None:
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
 
     cursor.execute('''UPDATE Users SET
-            is_distributed = 1
+            is_distributed = 1,
+            ward_id = ?
             WHERE user_id = ?
-            ''', (ward_id,))
+            ''', (ward_id, user_id))
 
     connection.commit()
     connection.close()

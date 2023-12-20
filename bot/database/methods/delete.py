@@ -9,6 +9,6 @@ async def delete_user(user_id: str, msg: Message) -> None:
     cursor = connection.cursor()
 
     cursor.execute('DELETE FROM Users WHERE user_id = ?', (user_id,))
-    await msg.answer(text="Пользователь удален")
+    await msg.answer(text="Пользователь удален", reply=False)
     connection.commit()
     connection.close()

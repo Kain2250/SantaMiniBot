@@ -18,6 +18,7 @@ def create_table_users() -> None:
     user_name TEXT,
     address TEXT,
     wish TEXT,
+    ward_id INTEGER,
     ward_name TEXT,
     ward_address TEXT,
     ward_wish TEXT,
@@ -46,6 +47,7 @@ async def create_user(msg: Message, state: FSMContext) -> None:
             ('user_name', ''),
             ('address', ''),
             ('wish', ''),
+            ('ward_id', 0),
             ('ward_name', ''),
             ('ward_address', ''),
             ('ward_wish', ''),
@@ -63,6 +65,7 @@ async def create_user(msg: Message, state: FSMContext) -> None:
         user_name,
         address,
         wish,
+        ward_id,
         ward_name,
         ward_address,
         ward_wish,
@@ -71,13 +74,14 @@ async def create_user(msg: Message, state: FSMContext) -> None:
         is_input_wish,
         is_distributed,
         is_register
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (
             msg.from_user.id,
             msg.from_user.first_name,
             msg.from_user.last_name,
             '',
             '',
             '',
+            0,
             '',
             '',
             '',
@@ -88,5 +92,4 @@ async def create_user(msg: Message, state: FSMContext) -> None:
             1))
 
         connection.commit()
-
         connection.close()
