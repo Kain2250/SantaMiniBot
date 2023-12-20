@@ -10,5 +10,5 @@ def env_load():
 
 
 class TgKeys:
-    TOKEN: Final = os.getenv('TOKEN', 'define me!')
-    DB_NAME: Final = os.getenv('DB_NAME', 'define me!')
+    TOKEN: Final = os.getenv('TOKEN', '6782535496:AAEDZhb0fwdlg76wDENYZCxxsgFOyKhrwt0')
+    DB_NAME: Final = os.getenv('DB_NAME', 'users.db')

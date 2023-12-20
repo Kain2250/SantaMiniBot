@@ -11,6 +11,8 @@ from bot.handlers import register_all_handlers
 from bot.database.models import register_models
 from bot.misc.env import env_load
 
+PROXY = False
+
 
 async def __on_start_up(dp: Dispatcher) -> None:
     register_all_filters(dp)
@@ -19,19 +21,21 @@ async def __on_start_up(dp: Dispatcher) -> None:
 
 
 async def start_bot():
-    # session = AiohttpSession('http://proxy.server:3128')
-
-    # bot = Bot(token=TgKeys.TOKEN, parse_mode='HTML', session=session)
     env_load()
-    bot = Bot(token=TgKeys.TOKEN, parse_mode='HTML')
+
+    if PROXY:
+        session = AiohttpSession('http://proxy.server:3128')
+        bot = Bot(token=TgKeys.TOKEN, parse_mode='HTML', session=session)
+    else:
+        bot = Bot(token=TgKeys.TOKEN, parse_mode='HTML')
+
     dp = Dispatcher(storage=MemoryStorage())
     await bot.delete_webhook(drop_pending_updates=True)
-
     logging.basicConfig(level=logging.NOTSET, filename='bot.log',
                         format='%(levelname)s - %(asctime)s - %(name)s - %(message)s')
 
     await __on_start_up(dp)
-    # try:
-    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
-    # finally:
-    #     await bot.session.close()
+    try:
+        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    finally:
+        await bot.session.close()
