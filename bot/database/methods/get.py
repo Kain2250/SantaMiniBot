@@ -20,11 +20,13 @@ async def is_draft() -> bool:
     cursor = connection.cursor()
     results = cursor.execute('SELECT is_distributed FROM Users').fetchone()
 
-    for item in results:
-        if item == 0:
-            return False
+    if results:
+        for item in results:
+            if item == 0:
+                return False
+        return True
 
-    return True
+    return False
 
 
 async def load_user(user_id: int, state: FSMContext) -> bool:
