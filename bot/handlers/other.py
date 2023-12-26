@@ -27,7 +27,7 @@ async def start_message(msg: Message, state: FSMContext):
                              reply_markup=get_wait_keyboard())
             await state.set_state(UserStateGroup.wait_state)
             logging.info(f"Текущий state = {await state.get_state()} Функция - start_message if")
-    elif is_draft():
+    elif await is_draft():
         await msg.answer("К сожалению время на регистрацию закончилось... Увы в этом году без тайного Санты")
     else:
         await create_user(msg=msg, state=state)
