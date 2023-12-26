@@ -11,14 +11,14 @@ from bot.keyboards.reply import get_edit_reply_keyboard, get_wait_keyboard
 
 async def edit_user_message(msg: Message, state: FSMContext):
     await msg.answer(text="Выбери что хочешь отредактировать",
-                     reply_markup=get_edit_reply_keyboard().as_markup(resize_keyboard=True))
+                     reply_markup=get_edit_reply_keyboard())
     await state.set_state(UserStateGroup.edit_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - edit_user_message")
 
 
 async def edit_name(msg: Message, state: FSMContext):
     await state.update_data(dict([('user_name', msg.text)]))
-    await msg.answer(text="Имя отредактировано", reply_markup=get_edit_reply_keyboard().as_markup(resize_keyboard=True))
+    await msg.answer(text="Имя отредактировано", reply_markup=get_edit_reply_keyboard())
     await state.set_state(UserStateGroup.edit_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - edit_name")
 
@@ -26,7 +26,7 @@ async def edit_name(msg: Message, state: FSMContext):
 async def edit_address(msg: Message, state: FSMContext):
     await state.update_data(dict([('address', msg.text)]))
     await msg.answer(text="Адрес отредактирован",
-                     reply_markup=get_edit_reply_keyboard().as_markup(resize_keyboard=True))
+                     reply_markup=get_edit_reply_keyboard())
     await state.set_state(UserStateGroup.edit_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - edit_address")
 
@@ -34,33 +34,33 @@ async def edit_address(msg: Message, state: FSMContext):
 async def edit_wish(msg: Message, state: FSMContext):
     await state.update_data(dict([('wish', msg.text), ('is_input_name', 1)]))
     await msg.answer(text="Желание отредактировано",
-                     reply_markup=get_edit_reply_keyboard().as_markup(resize_keyboard=True))
+                     reply_markup=get_edit_reply_keyboard())
     await state.set_state(UserStateGroup.edit_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - edit_wish")
 
 
 async def edit_name_message(msg: Message, state: FSMContext):
-    await msg.answer(text="Введи имя", reply_markup=get_edit_reply_keyboard().as_markup(resize_keyboard=True))
+    await msg.answer(text="Введи имя", reply_markup=get_edit_reply_keyboard())
     await state.set_state(UserStateGroup.edit_name_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - edit_name")
 
 
 async def edit_address_message(msg: Message, state: FSMContext):
-    await msg.answer(text="Введи адрес", reply_markup=get_edit_reply_keyboard().as_markup(resize_keyboard=True))
+    await msg.answer(text="Введи адрес", reply_markup=get_edit_reply_keyboard())
     await state.set_state(UserStateGroup.edit_address_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - edit_address")
 
 
 async def edit_wish_message(msg: Message, state: FSMContext):
     await msg.answer(text="Введи желание",
-                     reply_markup=get_edit_reply_keyboard().as_markup(resize_keyboard=True))
+                     reply_markup=get_edit_reply_keyboard())
     await state.set_state(UserStateGroup.edit_wish_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - edit_wish")
 
 
 async def cancel_edit(msg: Message, state: FSMContext):
-    await update_user(msg=msg, state=state)
-    await msg.answer(text="Ожидай начала жеребьевки", reply_markup=get_wait_keyboard().as_markup(resize_keyboard=True))
+    await update_user(user_id=msg.from_user.id, state=state)
+    await msg.answer(text="Ожидай начала жеребьевки", reply_markup=get_wait_keyboard())
     await state.set_state(UserStateGroup.wait_state)
     logging.info(f"Текущий state = {await state.get_state()} Функция - cancel_edit")
 

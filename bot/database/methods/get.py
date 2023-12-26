@@ -10,7 +10,21 @@ async def user_is_present(user_id: int) -> bool:
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
     results = cursor.execute('SELECT * FROM Users WHERE user_id = ?', (user_id,)).fetchone()
+    cursor.close()
+
     return results is not None
+
+
+async def is_draft() -> bool:
+    connection = sqlite3.connect(TgKeys.DB_NAME)
+    cursor = connection.cursor()
+    results = cursor.execute('SELECT is_distributed FROM Users').fetchone()
+
+    for item in results:
+        if item == 0:
+            return False
+
+    return True
 
 
 async def load_user(user_id: int, state: FSMContext) -> bool:
@@ -42,7 +56,7 @@ async def load_user(user_id: int, state: FSMContext) -> bool:
     return results is not None
 
 
-async def get_ward_data(user_id: str, state: FSMContext):
+async def print_ward_data(user_id: int, state: FSMContext):
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
 
@@ -76,7 +90,29 @@ async def get_ward_id(user_id: int, ward_id: str) -> str:
     return ret
 
 
-async def print_user(user_id: int, state: FSMContext, msg: Message):
+async def draw_ward(user_id: int, state: FSMContext) -> str:
+    connection = sqlite3.connect(TgKeys.DB_NAME)
+    cursor = connection.cursor()
+
+    results = cursor.execute(
+        'SELECT * FROM Users WHERE user_id != ? and is_distributed != 1 and ward_id != ?',
+        (user_id, user_id)).fetchone()
+
+    if results:
+        await state.update_data(
+            dict([('ward_id', results[0]),
+                  ('ward_name', results[3]),
+                  ('ward_address', results[4]),
+                  ('ward_wish', results[5])
+                  ])
+        )
+
+    connection.close()
+
+    return results[0] if results else 'none'
+
+
+async def adm_print_user(user_id: int, state: FSMContext, msg: Message):
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
     results = cursor.execute('SELECT * FROM Users WHERE user_id = ?', (user_id,)).fetchone()
@@ -103,7 +139,7 @@ async def print_user(user_id: int, state: FSMContext, msg: Message):
     connection.close()
 
 
-async def print_all_user(state: FSMContext, msg: Message):
+async def adm_print_all_user(msg: Message):
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
     results = cursor.execute('SELECT * FROM Users').fetchall()
@@ -136,6 +172,15 @@ async def get_all_users() -> list:
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
     results = cursor.execute('SELECT * FROM Users').fetchall()
+    connection.close()
+
+    return results
+
+
+async def get_user(user_id: int) -> list:
+    connection = sqlite3.connect(TgKeys.DB_NAME)
+    cursor = connection.cursor()
+    results = cursor.execute('SELECT * FROM Users WHERE user_id == ?', (user_id,)).fetchone()
     connection.close()
 
     return results

@@ -14,3 +14,4 @@ class UserStateGroup(StatesGroup):
     edit_name_state = State()
     edit_address_state = State()
     edit_wish_state = State()
+    final_state = State()

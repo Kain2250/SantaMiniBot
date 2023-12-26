@@ -1,11 +1,10 @@
 import sqlite3
 
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
 from bot.misc import TgKeys
 
 
-async def update_user(msg: Message, state: FSMContext) -> None:
+async def update_user(user_id: int, state: FSMContext) -> None:
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
 
@@ -35,21 +34,20 @@ async def update_user(msg: Message, state: FSMContext) -> None:
         data.get('is_input_address'),
         data.get('is_input_wish'),
         data.get('is_register'),
-        msg.from_user.id))
+        user_id))
 
     connection.commit()
     connection.close()
 
 
-async def update_ward(ward_id: str, user_id: str) -> None:
+async def update_ward_is_distributed(ward_id: str) -> None:
     connection = sqlite3.connect(TgKeys.DB_NAME)
     cursor = connection.cursor()
 
     cursor.execute('''UPDATE Users SET
-            is_distributed = 1,
-            ward_id = ?
-            WHERE user_id = ?
-            ''', (ward_id, user_id))
+            is_distributed = 1
+            WHERE user_id == ?
+            ''', (ward_id,))
 
     connection.commit()
     connection.close()

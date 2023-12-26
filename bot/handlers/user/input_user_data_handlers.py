@@ -13,7 +13,7 @@ async def input_name_message(msg: Message, state: FSMContext):
     await state.update_data(dict([('user_name', msg.text), ('is_input_name', 1)]))
 
     await msg.answer(text="Теперь твоему отправителю нужно знать где ты живешь "
-                          "(чтобы приехать и насрать под дверь, ха-ха, шутка!).\n"
+                          "(чтобы приехать и \"насрать\" под дверь, ха-ха, шутка!).\n"
                           "У любого получателя есть адрес и индекс ближайшей почты, так что пиши и не бойся😉\n"
                           "<u>Например:</u>\n"
                           "Печальная область, тоскливый район, город грусть, проспект разочарование, дом 13")
@@ -37,12 +37,12 @@ async def input_address_message(msg: Message, state: FSMContext):
 async def input_wish_message(msg: Message, state: FSMContext):
     await state.update_data(dict([('wish', msg.text), ('is_input_wish', 1)]))
     await state.set_state(UserStateGroup.wait_state)
-    await update_user(msg=msg, state=state)
+    await update_user(user_id=msg.from_user.id, state=state)
     await msg.answer(text="Все, давай, короче жди подарочек от твоего Тайного Санты. "
                           "А мы в свою очередь хотим тебе пожелать увеличения твоего бюджета в этом году, "
                           "уменьшения нервов и большого счастья!\n"
                           "P.S.Мы всегда ждём тебя в гости, всегда будем рады. С любовью, твои Пажитновы❤",
-                     reply_markup=get_wait_keyboard().as_markup(resize_keyboard=True))
+                     reply_markup=get_wait_keyboard())
     logging.info(f"Текущий state = {await state.get_state()} Функция - input_wish_message")
 
 
